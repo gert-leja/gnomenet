@@ -7,7 +7,7 @@ terraform {
 }
 
 provider "cml2" {
-	address = "https://192.168.1.109"
+	address = "https://192.168.1.78"
 	username = "spongebob"
 	password = "Pantsok123"
 	skip_verify = true
@@ -15,4 +15,152 @@ provider "cml2" {
 
 resource "cml2_lab" "spongebob" {
 	title = "GnomeNet"
+}
+
+resource "cml2_lifecycle" "starter" {
+	lab_id = cml2_lab.spongebob.id
+
+	elements = concat(
+		[for router in cml2_node.routers : router.id],
+		[for switch in cml2_node.switches : switch.id],
+		[cml2_node.ext_conn.id],
+		[
+			cml2_link.link_r1_ext,
+			cml2_link.link_r1_r2,
+			cml2_link.link_r2_sw1,
+			cml2_link.link_r2_r3,
+		]
+	)
+
+	state = "STARTED"
+}
+
+local {
+	# maps are not sorted this time, so iteration order will matter in variables.tf
+	router_management_ip = {
+		for idx, router in var.r_labels : router => cidrhost(var.management_cidr, idx + 1)
+	}
+
+	# point-to-point network setup, structure: (prefix, newbits, netnum) - newbits controls how many extra bits to add to the prefix length
+	# netnum sets which specific subnet block to return out of all the possible ones at this new subnet size (0-indexed)
+	# for example, first block is 10.1.0.0/30 and second block would be 10.1.0.4/30, and so on. 
+	r1_r2_subnet = cidrsubnet(var.link_base_cidr, 14, 0)
+	r2_r3_subnet = cidrsubnet(var.link_base_cidr, 14, 1)
+
+	subnet_mask = cidrnetmask(var.network_cidr)
+
+	router_ifaces = {
+		for router in var.r_labels : => router {
+			for ifnum in range(3) : "ethernet0/${ifnum}" =>
+				cidrhost(var.network_cidr, var.ip_start + index(var.r_labels, router) * var.ip_increment_amount + ifnum)
+		}
+	}
+
+	router_config = {
+		r1 = <<-EOT
+			hostname ${var.r_labels["r1"]}
+			!
+			enable secret ${var.enable_secret}
+			!
+			ip domain name gnomenet.com
+			crypto key generate rsa modulus 4096
+			!
+			line vty 0 4
+			 login local
+			 transport input ssh
+			!
+			interface Loopback0
+			 ip address ${local.router_management_ip} 255.255.255.255
+			 no shutdown
+			!
+			interface ethernet0/0
+			 ip address dhcp
+			 no shutdown
+			interface ethernet0/1
+			 ip address ${cidrhost(local.r1_r2_subnet, 1)} ${cidrnetmask(local.r1_r2_subnet)}
+			 no shutdown
+			!
+			router ospf 1
+			 network 192.168.0.0 0.0.255.255 area 0
+			 network 172.16.0.0 0.0.255.255 area 1
+			end
+		EOT
+
+		r2 = <<-EOT
+
+		EOT
+
+		r3 = <<-EOT
+
+		EOT
+	}
+
+	switch_config = {
+		sw1 = <<-EOT
+
+		EOT
+	}
+
+}
+
+resource "cml2_node" "ext_conn" {
+	lab_id = cml2_lab.spongebob.id
+	nodedefinition = "external_connector"
+	configuration = "bridge0"
+	label = "External"
+}
+
+# R1 will connect to External, but there is no need for a separate network assignment for R1, R1 will grab IP via DHCP.
+resource "cml2_node" "routers" {
+	for_each = var.r_labels
+	lab_id = cml2_lab.spongebob.id
+	nodedefinition = "iol-xe"
+	label = each.value
+}
+
+# the switch SW1 will have different VLANs so router R2 will connect to SW1 and apply ROAS configuration
+resource "cml2_node" "switches" {
+	for_each = var.sw_labels
+	lab_id = cml2_lab.spongebob.id
+	nodedefinition = "ioll2-xe"
+	label = each.value
+}
+
+resource "cml2_link" "link_r1_ext" {
+	lab_id = cml2_lab.spongebob.id
+	node_a = cml2_lab.routers["r1"].id
+	slot_a = 0
+	node_b = cml2_lab.ext_conn.id
+}
+
+resource "cml2_link" "link_r1_r2" {
+	lab_id = cml2_lab.spongebob.id
+	node_a = cml2_lab.routers["r1"].id
+	slot_a = 1
+	node_b = cml2_lab.routers["r2"].id
+	slot_b = 0
+}
+
+resource "cml2_link" "link_r2_sw1" {
+	lab_id = cml2_lab.spongebob.id
+	node_a = cml2_lab.routers["r2"].id
+	slot_a = 2
+	node_b = cml2_lab.switches["sw1"]
+	slot_b = 0
+}
+
+resource "cml2_link" "link_r2_r3" {
+	lab_id = cml2_lab.spongebob.id
+	node_a = cml2_lab.routers["r2"]
+	slot_a = 1
+	node_b = cml2_lab.routers["r3"]
+	slot_b = 0
+}
+
+output "router_id" {
+	value = { for device, router in cml2_node.routers : router.label => router.id}
+}
+
+output "switch_id" {
+	value = { for device, switch in cml2_node.switches : switch.label => switch.id}
 }
