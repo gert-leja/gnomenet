@@ -41,6 +41,11 @@ locals {
 		for idx, router in var.r_labels : router => cidrhost(var.management_cidr, idx + 1)
 	}
 
+	# this is not a very good way of doing this
+	switch_management_ip = {
+		for idx, switch in var.sw_lables : switch => cidrhost(var.management_cidr, idx + 4)
+	}
+
 	# point-to-point network setup, structure: (prefix, newbits, netnum) - newbits controls how many extra bits to add to the prefix length
 	# netnum sets which specific subnet block to return out of all the possible ones at this new subnet size (0-indexed)
 	# for example, first block is 10.1.0.0/30 and second block would be 10.1.0.4/30, and so on. 
@@ -73,7 +78,7 @@ locals {
 			 transport input ssh
 			!
 			interface Loopback0
-			 ip address ${local.router_management_ip} 255.255.255.255
+			 ip address ${local.router_management_ip["r1"]} 255.255.255.255
 			 no shutdown
 			!
 			interface ethernet0/0
@@ -104,7 +109,7 @@ locals {
 			 transport input ssh
 			!
 			interface Loopback0
-			 ip address ${local.router_management_ip} 255.255.255.255
+			 ip address ${local.router_management_ip["r2"]} 255.255.255.255
 			 no shutdown
 			!
 			interface ethernet0/0
@@ -141,7 +146,7 @@ locals {
 			 transport input ssh
 			!
 			interface Loopback0
-			 ip address ${cidrhost(local.router_management_ip)} 255.255.255.255
+			 ip address ${cidrhost(local.router_management_ip["r3"])} 255.255.255.255
 			!
 			interface ethernet0/0
 			 ip address ${cidrhost(local.r2_r3_subnet, 2)} ${cidrnetmask(local.r2_r3_subnet)}
@@ -171,7 +176,7 @@ locals {
 			 transport input ssh
 			!
 			interface vlan 1
-			 ip address ${cidrhost(local.switch_management_ip)} 255.255.255.255
+			 ip address ${cidrhost(local.switch_management_ip["sw1"])} 255.255.255.255
 			 no shutdown
 			!
 			interface ethernet0/0
