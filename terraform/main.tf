@@ -35,7 +35,7 @@ resource "cml2_lifecycle" "starter" {
 	state = "STARTED"
 }
 
-local {
+locals {
 	# maps are not sorted this time, so iteration order will matter in variables.tf
 	router_management_ip = {
 		for idx, router in var.r_labels : router => cidrhost(var.management_cidr, idx + 1)
