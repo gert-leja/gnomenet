@@ -51,7 +51,7 @@ locals {
 	subnet_mask = cidrnetmask(var.network_cidr)
 
 	router_ifaces = {
-		for router in var.r_labels : => router {
+		for router in var.r_labels : router => {
 			for ifnum in range(3) : "ethernet0/${ifnum}" =>
 				cidrhost(var.network_cidr, var.ip_start + index(var.r_labels, router) * var.ip_increment_amount + ifnum)
 		}
