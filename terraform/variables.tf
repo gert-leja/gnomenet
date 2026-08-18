@@ -36,12 +36,12 @@ variable "ip_increment_amount" {
 	default = 10
 }
 
-variable = "ip_start" {
+variable "ip_start" {
 	type = number
 	default = 10
 }
 
-variable = "management_cidr" {
+variable "management_cidr" {
 	type = string
 	default = "1.1.1.0/24"
 }
