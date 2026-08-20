@@ -17,24 +17,6 @@ resource "cml2_lab" "spongebob" {
 	title = "GnomeNet"
 }
 
-resource "cml2_lifecycle" "starter" {
-	lab_id = cml2_lab.spongebob.id
-
-	elements = concat(
-		[for router in cml2_node.routers : router.id],
-		[for switch in cml2_node.switches : switch.id],
-		[cml2_node.ext_conn.id],
-		[
-			cml2_link.link_r1_ext,
-			cml2_link.link_r1_r2,
-			cml2_link.link_r2_sw1,
-			cml2_link.link_r2_r3,
-		]
-	)
-
-	state = "STARTED"
-}
-
 locals {
 	router_management_ip = {
 		for idx, key in sort(keys(var.r_labels)) : key => cidrhost(var.management_cidr, idx + 1)
@@ -55,9 +37,9 @@ locals {
 	subnet_mask = cidrnetmask(var.network_cidr)
 
 	router_ifaces = {
-		for router in var.r_labels : router => {
+		for idx, router in sort(keys(var.r_labels)) : router => {
 			for ifnum in range(3) : "ethernet0/${ifnum}" =>
-				cidrhost(var.network_cidr, var.ip_start + index(sort(keys(var.r_labels)), router) * var.ip_increment_amount + ifnum)
+				cidrhost(var.network_cidr, var.ip_start + idx * var.ip_increment_amount + ifnum)
 		}
 	}
 
@@ -240,6 +222,24 @@ resource "cml2_link" "link_r2_r3" {
 	slot_a = 1
 	node_b = cml2_node.routers["r3"].id
 	slot_b = 0
+}
+
+resource "cml2_lifecycle" "starter" {
+	lab_id = cml2_lab.spongebob.id
+
+	elements = concat(
+		[for router in cml2_node.routers : router.id],
+		[for switch in cml2_node.switches : switch.id],
+		[cml2_node.ext_conn.id],
+		[
+			cml2_link.link_r1_ext.id,
+			cml2_link.link_r1_r2.id,
+			cml2_link.link_r2_sw1.id,
+			cml2_link.link_r2_r3.id,
+		]
+	)
+
+	state = "STARTED"
 }
 
 output "router_id" {
