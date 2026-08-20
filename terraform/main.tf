@@ -43,7 +43,7 @@ locals {
 
 	# this is not a very good way of doing this
 	switch_management_ip = {
-		for idx, switch in var.sw_lables : switch => cidrhost(var.management_cidr, idx + 4)
+		for idx, switch in var.sw_labels : switch => cidrhost(var.management_cidr, idx + 4)
 	}
 
 	# point-to-point network setup, structure: (prefix, newbits, netnum) - newbits controls how many extra bits to add to the prefix length
@@ -146,7 +146,7 @@ locals {
 			 transport input ssh
 			!
 			interface Loopback0
-			 ip address ${cidrhost(local.router_management_ip["r3"])} 255.255.255.255
+			 ip address ${local.router_management_ip["r3"]} 255.255.255.255
 			!
 			interface ethernet0/0
 			 ip address ${cidrhost(local.r2_r3_subnet, 2)} ${cidrnetmask(local.r2_r3_subnet)}
