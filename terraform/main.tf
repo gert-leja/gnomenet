@@ -22,11 +22,6 @@ locals {
 		for idx, key in sort(keys(var.r_labels)) : key => cidrhost(var.management_cidr, idx + 1)
 	}
 
-	# this is not a very good way of assigning IPs to router and switch, but it will be replaced when the script is fixed.
-	switch_management_ip = {
-		for idx, key in sort(keys(var.sw_labels)) : key => cidrhost(var.management_cidr, idx + 4)
-	}
-
 	# ip_start variable ensure it will always be 192.168.1.10, change this if conflicting addresses are found.
 	local_network_ip = cidrhost(var.local_network, var.ip_start)
 
@@ -153,10 +148,6 @@ locals {
 			 transport input ssh
 			!
 			interface vlan 1
-			 ip address ${local.switch_management_ip["sw1"]} 255.255.255.255
-			 no shutdown
-			!
-			interface ethernet0/0
 			 ip address ${cidrhost(local.r2_sw1_subnet, 2)} ${cidrnetmask(local.r2_sw1_subnet)}
 			 no shutdown
 			!
