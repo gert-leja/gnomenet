@@ -36,14 +36,13 @@ resource "cml2_lifecycle" "starter" {
 }
 
 locals {
-	# maps are not sorted this time, so iteration order will matter in variables.tf
 	router_management_ip = {
-		for idx, router in var.r_labels : router => cidrhost(var.management_cidr, idx + 1)
+		for idx, key in sort(keys(var.r_labels)) : key => cidrhost(var.management_cidr, idx + 1)
 	}
 
-	# this is not a very good way of doing this
+	# this is not a very good way of assigning IPs to router and switch, but it will be replaced when the script is fixed.
 	switch_management_ip = {
-		for idx, switch in var.sw_labels : switch => cidrhost(var.management_cidr, idx + 4)
+		for idx, key in sort(keys(var.sw_labels)) : key => cidrhost(var.management_cidr, idx + 4)
 	}
 
 	# point-to-point network setup, structure: (prefix, newbits, netnum) - newbits controls how many extra bits to add to the prefix length
@@ -231,15 +230,15 @@ resource "cml2_link" "link_r2_sw1" {
 	lab_id = cml2_lab.spongebob.id
 	node_a = cml2_node.routers["r2"].id
 	slot_a = 2
-	node_b = cml2_node.switches["sw1"]
+	node_b = cml2_node.switches["sw1"].id
 	slot_b = 0
 }
 
 resource "cml2_link" "link_r2_r3" {
 	lab_id = cml2_lab.spongebob.id
-	node_a = cml2_node.routers["r2"]
+	node_a = cml2_node.routers["r2"].id
 	slot_a = 1
-	node_b = cml2_node.routers["r3"]
+	node_b = cml2_node.routers["r3"].id
 	slot_b = 0
 }
 
