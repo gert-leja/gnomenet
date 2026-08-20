@@ -55,3 +55,8 @@ variable "network_cidr" {
   type = string
   default = "172.16.0.0/16"
 }
+
+variable "local_network" {
+	type = string
+	default = "192.168.1.0/24"
+}

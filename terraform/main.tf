@@ -27,9 +27,8 @@ locals {
 		for idx, key in sort(keys(var.sw_labels)) : key => cidrhost(var.management_cidr, idx + 4)
 	}
 
-	local_network_ip = {
-
-	}
+	# ip_start variable ensure it will always be 192.168.1.10, change this if conflicting addresses are found.
+	local_network_ip = cidrhost(var.local_network, var.ip_start)
 
 	# point-to-point network setup, structure: (prefix, newbits, netnum) - newbits controls how many extra bits to add to the prefix length
 	# netnum sets which specific subnet block to return out of all the possible ones at this new subnet size (0-indexed)
