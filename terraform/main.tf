@@ -183,6 +183,7 @@ resource "cml2_node" "routers" {
 	lab_id = cml2_lab.spongebob.id
 	nodedefinition = "iol-xe"
 	label = each.value
+	configuration = local.router_config[each.key]
 }
 
 # the switch SW1 will have different VLANs so router R2 will connect to SW1 and apply ROAS configuration
@@ -191,6 +192,7 @@ resource "cml2_node" "switches" {
 	lab_id = cml2_lab.spongebob.id
 	nodedefinition = "ioll2-xe"
 	label = each.value
+	configuration = local.switch_config[each.key]
 }
 
 resource "cml2_link" "link_r1_ext" {
