@@ -214,32 +214,32 @@ resource "cml2_node" "switches" {
 
 resource "cml2_link" "link_r1_ext" {
 	lab_id = cml2_lab.spongebob.id
-	node_a = cml2_lab.routers["r1"].id
+	node_a = cml2_node.routers["r1"].id
 	slot_a = 0
-	node_b = cml2_lab.ext_conn.id
+	node_b = cml2_node.ext_conn.id
 }
 
 resource "cml2_link" "link_r1_r2" {
 	lab_id = cml2_lab.spongebob.id
-	node_a = cml2_lab.routers["r1"].id
+	node_a = cml2_node.routers["r1"].id
 	slot_a = 1
-	node_b = cml2_lab.routers["r2"].id
+	node_b = cml2_node.routers["r2"].id
 	slot_b = 0
 }
 
 resource "cml2_link" "link_r2_sw1" {
 	lab_id = cml2_lab.spongebob.id
-	node_a = cml2_lab.routers["r2"].id
+	node_a = cml2_node.routers["r2"].id
 	slot_a = 2
-	node_b = cml2_lab.switches["sw1"]
+	node_b = cml2_node.switches["sw1"]
 	slot_b = 0
 }
 
 resource "cml2_link" "link_r2_r3" {
 	lab_id = cml2_lab.spongebob.id
-	node_a = cml2_lab.routers["r2"]
+	node_a = cml2_node.routers["r2"]
 	slot_a = 1
-	node_b = cml2_lab.routers["r3"]
+	node_b = cml2_node.routers["r3"]
 	slot_b = 0
 }
 
