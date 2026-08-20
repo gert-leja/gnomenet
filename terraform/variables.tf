@@ -2,9 +2,9 @@ variable "r_labels" {
 	type = map(string)
 
 	default = {
-  r1 = "R1"
-  r2 = "R2"
-  r3 = "R3"
+  r1 = "R1",
+  r2 = "R2",
+  r3 = "R3",
 	}	
 }
 
@@ -12,7 +12,7 @@ variable "sw_labels" {
   type = map(string)
 
   default = {
-  sw1 = "SW1"
+  sw1 = "SW1",
   }
 }
 
