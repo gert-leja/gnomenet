@@ -71,7 +71,7 @@ locals {
 			!
 			router ospf 1
 			 network 192.168.0.0 0.0.255.255 area 0
-			 network 172.16.0.0 0.0.255.255 area 1
+			 network 10.0.0.0 0.255.255.255 area 1
 			end
 		EOT
 
@@ -107,7 +107,7 @@ locals {
 			!
 			router ospf 1
 			 network 192.168.0.0 0.0.255.255 area 0
-			 network 172.16.0.0 0.0.255.255 area 1
+			 network 10.0.0.0 0.255.255.255 area 1
 			!
 			end
 		EOT
@@ -135,7 +135,7 @@ locals {
 			!
 			router ospf 1
 			 network 192.168.0.0 0.0.255.255 area 0
-			 network 172.16.0.0 0.0.255.255 area 1
+			 network 10.0.0.0 0.255.255.255 area 1
 			!
 			end
 		EOT
