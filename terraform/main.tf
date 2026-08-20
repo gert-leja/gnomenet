@@ -27,6 +27,10 @@ locals {
 		for idx, key in sort(keys(var.sw_labels)) : key => cidrhost(var.management_cidr, idx + 4)
 	}
 
+	local_network_ip = {
+
+	}
+
 	# point-to-point network setup, structure: (prefix, newbits, netnum) - newbits controls how many extra bits to add to the prefix length
 	# netnum sets which specific subnet block to return out of all the possible ones at this new subnet size (0-indexed)
 	# for example, first block is 10.1.0.0/30 and second block would be 10.1.0.4/30, and so on. 
@@ -36,138 +40,131 @@ locals {
 
 	subnet_mask = cidrnetmask(var.network_cidr)
 
-	router_ifaces = {
-		for idx, router in sort(keys(var.r_labels)) : router => {
-			for ifnum in range(3) : "ethernet0/${ifnum}" =>
-				cidrhost(var.network_cidr, var.ip_start + idx * var.ip_increment_amount + ifnum)
-		}
-	}
+}
 
-	router_config = {
-		r1 = <<-EOT
-			hostname ${var.r_labels["r1"]}
-			!
-			enable secret ${var.enable_secret}
-			!
-			username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
-			!
-			ip domain name gnomenet.com
-			crypto key generate rsa modulus 4096
-			!
-			line vty 0 4
-			 login local
-			 transport input ssh
-			!
-			interface Loopback0
-			 ip address ${local.router_management_ip["r1"]} 255.255.255.255
-			 no shutdown
-			!
-			interface ethernet0/0
-			 ip address dhcp
-			 no shutdown
-			interface ethernet0/1
-			 ip address ${cidrhost(local.r1_r2_subnet, 1)} ${cidrnetmask(local.r1_r2_subnet)}
-			 no shutdown
-			!
-			router ospf 1
-			 network 192.168.0.0 0.0.255.255 area 0
-			 network 10.0.0.0 0.255.255.255 area 1
-			end
-		EOT
+router_config = {
+	r1 = <<-EOT
+		hostname ${var.r_labels["r1"]}
+		!
+		enable secret ${var.enable_secret}
+		!
+		username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
+		!
+		ip domain name gnomenet.com
+		crypto key generate rsa modulus 4096
+		!
+		line vty 0 4
+		 login local
+		 transport input ssh
+		!
+		interface Loopback0
+		 ip address ${local.router_management_ip["r1"]} 255.255.255.255
+		 no shutdown
+		!
+		interface ethernet0/0
+		 ip address ${local.local_network_ip} 255.255.255.0
+		 no shutdown
+		interface ethernet0/1
+		 ip address ${cidrhost(local.r1_r2_subnet, 1)} ${cidrnetmask(local.r1_r2_subnet)}
+		 no shutdown
+		!
+		router ospf 1
+		 network 192.168.0.0 0.0.255.255 area 0
+		 network 10.0.0.0 0.255.255.255 area 1
+		end
+	EOT
 
-		r2 = <<-EOT
-			hostname ${var.r_labels["r2"]}
-			!
-			enable secret ${var.enable_secret}
-			!
-			username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
-			!
-			ip domain name gnomenet.com
-			crypto key generate rsa modulus 4096
-			!
-			line vty 0 4
-			 login local
-			 transport input ssh
-			!
-			interface Loopback0
-			 ip address ${local.router_management_ip["r2"]} 255.255.255.255
-			 no shutdown
-			!
-			interface ethernet0/0
-			 ip address ${cidrhost(local.r1_r2_subnet, 2)} ${cidrnetmask(local.r1_r2_subnet)}
-			 no shutdown
-			!
-			interface ethernet0/1
-			 ip address ${cidrhost(local.r2_r3_subnet, 1)} ${cidrnetmask(local.r2_r3_subnet)}
-			 no shutdown
-			!
-			interface ethernet0/2
-			 ip address ${cidrhost(local.r2_sw1_subnet, 1)} ${cidrnetmask(local.r2_sw1_subnet)}
-			 no shutdown
-			!
-			router ospf 1
-			 network 192.168.0.0 0.0.255.255 area 0
-			 network 10.0.0.0 0.255.255.255 area 1
-			!
-			end
-		EOT
+	r2 = <<-EOT
+		hostname ${var.r_labels["r2"]}
+		!
+		enable secret ${var.enable_secret}
+		!
+		username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
+		!
+		ip domain name gnomenet.com
+		crypto key generate rsa modulus 4096
+		!
+		line vty 0 4
+		 login local
+		 transport input ssh
+		!
+		interface Loopback0
+		 ip address ${local.router_management_ip["r2"]} 255.255.255.255
+		 no shutdown
+		!
+		interface ethernet0/0
+		 ip address ${cidrhost(local.r1_r2_subnet, 2)} ${cidrnetmask(local.r1_r2_subnet)}
+		 no shutdown
+		!
+		interface ethernet0/1
+		 ip address ${cidrhost(local.r2_r3_subnet, 1)} ${cidrnetmask(local.r2_r3_subnet)}
+		 no shutdown
+		!
+		interface ethernet0/2
+		 ip address ${cidrhost(local.r2_sw1_subnet, 1)} ${cidrnetmask(local.r2_sw1_subnet)}
+		 no shutdown
+		!
+		router ospf 1
+		 network 192.168.0.0 0.0.255.255 area 0
+		 network 10.0.0.0 0.255.255.255 area 1
+		!
+		end
+	EOT
 
-		r3 = <<-EOT
-			hostname ${var.r_labels["r3"]}
-			!
-			enable secret ${var.enable_secret}
-			!
-			username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
-			!
-			ip domain name gnomenet.com
-			crypto key generate rsa modulus 4096
-			!
-			line vty 0 4
-			 login local
-			 transport input ssh
-			!
-			interface Loopback0
-			 ip address ${local.router_management_ip["r3"]} 255.255.255.255
-			!
-			interface ethernet0/0
-			 ip address ${cidrhost(local.r2_r3_subnet, 2)} ${cidrnetmask(local.r2_r3_subnet)}
-			 no shutdown
-			!
-			router ospf 1
-			 network 192.168.0.0 0.0.255.255 area 0
-			 network 10.0.0.0 0.255.255.255 area 1
-			!
-			end
-		EOT
-	}
+	r3 = <<-EOT
+		hostname ${var.r_labels["r3"]}
+		!
+		enable secret ${var.enable_secret}
+		!
+		username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
+		!
+		ip domain name gnomenet.com
+		crypto key generate rsa modulus 4096
+		!
+		line vty 0 4
+		 login local
+		 transport input ssh
+		!
+		interface Loopback0
+		 ip address ${local.router_management_ip["r3"]} 255.255.255.255
+		!
+		interface ethernet0/0
+		 ip address ${cidrhost(local.r2_r3_subnet, 2)} ${cidrnetmask(local.r2_r3_subnet)}
+		 no shutdown
+		!
+		router ospf 1
+		 network 192.168.0.0 0.0.255.255 area 0
+		 network 10.0.0.0 0.255.255.255 area 1
+		!
+		end
+	EOT
+}
 
-	switch_config = {
-		sw1 = <<-EOT
-			hostname ${var.sw_labels["sw1"]}
-			!
-			enable secret ${var.enable_secret}
-			!
-			username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
-			!
-			ip domain name gnomenet.com
-			crypto key generate rsa modulus 4096
-			!
-			line vty 0 4
-			 login local
-			 transport input ssh
-			!
-			interface vlan 1
-			 ip address ${local.switch_management_ip["sw1"]} 255.255.255.255
-			 no shutdown
-			!
-			interface ethernet0/0
-			 ip address ${cidrhost(local.r2_sw1_subnet, 2)} ${cidrnetmask(local.r2_sw1_subnet)}
-			 no shutdown
-			!
-			end
-		EOT
-	}
-
+switch_config = {
+	sw1 = <<-EOT
+		hostname ${var.sw_labels["sw1"]}
+		!
+		enable secret ${var.enable_secret}
+		!
+		username ${var.ansible_user} privilege 15 secret ${var.ansible_password}
+		!
+		ip domain name gnomenet.com
+		crypto key generate rsa modulus 4096
+		!
+		line vty 0 4
+		 login local
+		 transport input ssh
+		!
+		interface vlan 1
+		 ip address ${local.switch_management_ip["sw1"]} 255.255.255.255
+		 no shutdown
+		!
+		interface ethernet0/0
+		 ip address ${cidrhost(local.r2_sw1_subnet, 2)} ${cidrnetmask(local.r2_sw1_subnet)}
+		 no shutdown
+		!
+		end
+	EOT
 }
 
 resource "cml2_node" "ext_conn" {
