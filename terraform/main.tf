@@ -57,7 +57,7 @@ locals {
 	router_ifaces = {
 		for router in var.r_labels : router => {
 			for ifnum in range(3) : "ethernet0/${ifnum}" =>
-				cidrhost(var.network_cidr, var.ip_start + index(var.r_labels, router) * var.ip_increment_amount + ifnum)
+				cidrhost(var.network_cidr, var.ip_start + index(sort(keys(var.r_labels)), router) * var.ip_increment_amount + ifnum)
 		}
 	}
 
