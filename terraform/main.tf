@@ -176,7 +176,7 @@ locals {
 			 transport input ssh
 			!
 			interface vlan 1
-			 ip address ${cidrhost(local.switch_management_ip["sw1"])} 255.255.255.255
+			 ip address ${local.switch_management_ip["sw1"]} 255.255.255.255
 			 no shutdown
 			!
 			interface ethernet0/0
