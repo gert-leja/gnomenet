@@ -32,8 +32,6 @@ locals {
 	r2_r3_subnet = cidrsubnet(var.link_base_cidr, 14, 1)
 	r2_sw1_subnet = cidrsubnet(var.link_base_cidr, 14, 2)
 
-	subnet_mask = cidrnetmask(var.network_cidr)
-
 	router_config = {
 		r1 = <<-EOT
 			hostname ${var.r_labels["r1"]}
