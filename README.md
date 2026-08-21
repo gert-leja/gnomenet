@@ -11,9 +11,9 @@ To do this, the credentials are now treated as environmental variables.
 
 These values should be set **before** running **terraform plan / apply**, and can be done like this
 ```
-export TF_VAR_cml_address = "https://192.168.1.1" # example URL
-export TF_VAR_cml_username = "USERNAME"
-export TF_VAR_cml_password = "PASSWORD"
+export TF_VAR_cml_address="https://192.168.1.1" # example URL
+export TF_VAR_cml_username="USERNAME"
+export TF_VAR_cml_password="PASSWORD"
 ```
 
 These exports only last for the current shell session, meaning these need to be re-exported every time.
