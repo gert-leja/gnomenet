@@ -1,3 +1,21 @@
+
+variable "cml_address" {
+	type = string
+	description = "URL of CML host"
+}
+
+variable "cml_username" {
+	type = string
+	description = "Username of CML account (not cockpit)"
+	sensitive = true
+}
+
+variable "cml_password" {
+	type = string
+	description = "password of the CML account"
+	sensitive = true
+}
+
 variable "r_labels" {
 	type = map(string)
 

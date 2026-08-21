@@ -7,9 +7,9 @@ terraform {
 }
 
 provider "cml2" {
-	address = "https://192.168.1.109"
-	username = "spongebob"
-	password = "Pantsok123"
+	address = var.cml_address
+	username = var.cml_username
+	password = var.cml_password
 	skip_verify = true
 }
 
