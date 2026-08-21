@@ -214,17 +214,16 @@ resource "cml2_link" "link_r2_r3" {
 resource "cml2_lifecycle" "starter" {
 	lab_id = cml2_lab.spongebob.id
 
-	elements = concat(
-		[for router in cml2_node.routers : router.id],
-		[for switch in cml2_node.switches : switch.id],
-		[cml2_node.ext_conn.id],
-		[
-			cml2_link.link_r1_ext.id,
-			cml2_link.link_r1_r2.id,
-			cml2_link.link_r2_sw1.id,
-			cml2_link.link_r2_r3.id,
-		]
-	)
+	depends_on = [
+		cml2_node.routers,
+		cml2_node.switches,
+		cml2_node.ext_conn,
+		cml2_link.link_r1_ext,
+		cml2_link.link_r1_r2,
+		cml2_link.link_r2_sw1,
+		cml2_link.link_r2_r3,
+	]
+	
 
 	state = "STARTED"
 }
