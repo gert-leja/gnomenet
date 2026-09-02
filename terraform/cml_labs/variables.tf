@@ -40,9 +40,10 @@ variable "ip_increment_amount" {
 	default = 10
 }
 
+# keep default in case ip_start is called more than twice but not passed in root variables
 variable "ip_start" {
 	type = number
-	default = 10
+	default = 9 
 }
 
 variable "management_cidr" {

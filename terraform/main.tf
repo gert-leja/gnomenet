@@ -33,6 +33,7 @@ module "lab_1" {
 	management_cidr = var.lab_1_management_cidr
 	link_base_cidr = var.lab_1_link_base_cidr
 	local_network = var.local_network
+	ip_start = var.lab_1_ip_start
 }
 
 module "lab_2" {
@@ -45,6 +46,7 @@ module "lab_2" {
 	management_cidr = var.lab_2_management_cidr
 	link_base_cidr = var.lab_2_link_base_cidr
 	local_network = var.local_network
+	ip_start = var.lab_2_ip_start
 }
 
 # add interconnect link here later

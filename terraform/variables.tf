@@ -59,3 +59,15 @@ variable "local_network" {
   type = string
   default = "192.168.1.0/24"
 }
+
+variable "lab_1_ip_start" {
+  type = number
+  default = 10
+  description = "offset host part for lab 1's R1"
+}
+
+variable "lab_2_ip_start" {
+  type = number
+  defeault = 11
+  description = "offset host part for lab 2's R1"
+}
