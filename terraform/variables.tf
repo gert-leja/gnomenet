@@ -1,80 +1,61 @@
-
-variable "cml_address" {
-	type = string
-	description = "URL of CML host"
-}
-
-variable "cml_username" {
-	type = string
-	description = "Username of CML account (not cockpit)"
-	sensitive = true
-}
-
-variable "cml_password" {
-	type = string
-	description = "password of the CML account"
-	sensitive = true
-}
-
-variable "r_labels" {
-	type = map(string)
-
-	default ={ 
-	r1 = "R1",
-	r2 = "R2",
-	r3 = "R3"
-	}
-}
-
-variable "sw_labels" {
-  type = map(string)
-
-  default = {
-  sw1 = "SW1",
-  }
-}
-
-variable "enable_secret" {
-	type = string
-	default = "admin"
-}
-
-variable "ansible_user" {
-	type = string
-	default = "admin"
-}
-
-variable "ansible_password" {
-	type = string
-	default = "admin"
-}
-
-variable "ip_increment_amount" {
-	type = number
-	default = 10
-}
-
-variable "ip_start" {
-	type = number
-	default = 10
-}
-
-variable "management_cidr" {
-	type = string
-	default = "1.1.1.0/24"
-}
-
-variable "link_base_cidr" {
-	type = string
-	default = "10.1.0.0/16"
-}
-
-variable "network_cidr" {
+# Host 1
+variable "cml_address_1" {
   type = string
-  default = "172.16.0.0/16"
+  description = "URL of CML host 1"
+}
+
+variable "cml_username_1" {
+  type = string
+  description = "Username of CML host 1 account"
+  sensitive = true
+}
+
+variable "cml_password_1" {
+  type = string
+  description = "Password of CML host 1 account"
+  sensitive = true
+}
+
+# Host 2
+variable "cml_address_2" {
+  type = string
+  description = "URL of CML host 2"
+}
+
+variable "cml_username_2" {
+  type = string
+  description = "Username of CML host 2 account"
+  sensitive = true
+}
+
+variable "cml_password_2" {
+  type = string
+  description = "Password of CML host 2 account"
+  sensitive = true
+}
+
+# addresses
+variable "lab_1_management_cidr" {
+  type = string
+  default = "1.1.1.0/24"
+}
+
+variable "lab_1_link_base_cidr" {
+  type = string
+  default = "10.1.0.0/16"
+}
+
+variable "lab_2_management_cidr" {
+  type = string
+  default = "2.2.2.0/24"
+}
+
+variable "lab_2_link_base_cidr" {
+  type = string
+  default = "10.2.0.0/16"
 }
 
 variable "local_network" {
-	type = string
-	default = "192.168.1.0/24"
+  type = string
+  default = "192.168.1.0/24"
 }
