@@ -68,6 +68,6 @@ variable "lab_1_ip_start" {
 
 variable "lab_2_ip_start" {
   type = number
-  defeault = 11
+  default = 11
   description = "offset host part for lab 2's R1"
 }
