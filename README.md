@@ -10,10 +10,15 @@ In order to keep the environment secure, no credentials should be published to t
 To do this, the credentials are now treated as environmental variables.
 
 These values should be set **before** running **terraform plan / apply**, and can be done like this
+
+**Update:** Pay attention to the _1 and _2 lines at the end, these represent individual CML instances, now that the code has been restructured to be modular, these exports are needed for each CML instance.
 ```
-export TF_VAR_cml_address="https://192.168.1.1" # example URL
-export TF_VAR_cml_username="USERNAME"
-export TF_VAR_cml_password="PASSWORD"
+export TF_VAR_cml_address_1="https://192.168.1.1" # example URL
+export TF_VAR_cml_username_1="USERNAME"
+export TF_VAR_cml_password_1="PASSWORD"
+export TF_VAR_cml_address_2="https://192.168.1.2" # example URL
+export TF_VAR_cml_username_2="USERNAME"
+export TF_VAR_cml_password_2="PASSWORD"
 ```
 
 These exports only last for the current shell session, meaning these need to be re-exported every time.
