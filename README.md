@@ -32,5 +32,5 @@ If you are running this locally, you can also create a **terraform.tfvars** file
 known_hosts file on the VM currently needs to be cleared manually if the user is manually ssh'ing into devices, every apply will generate new ssh keys for the routers, use this line of code:
 
 ```
-ssh-keygen -f '~/.ssh/known_hosts' -R '192.168.1.10' # example address
+ssh-keygen -f '/home/gnome/.ssh/known_hosts' -R '192.168.1.10' # example address
 ```
