@@ -50,9 +50,6 @@ module "lab_2" {
 	ip_start = var.lab_2_ip_start
 }
 
-# add interconnect link here later
-
-
 # outputs
 output "lab_1_router_id" {
 	value = module.lab_1.router_id
