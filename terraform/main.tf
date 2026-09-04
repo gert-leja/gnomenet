@@ -2,6 +2,7 @@ terraform {
 	required_providers {
 		cml2 = {
 			source = "CiscoDevNet/cml2"
+			version = "0.9.1"
 		}
 	}
 }
@@ -11,7 +12,7 @@ provider "cml2" {
 	address = var.cml_address_1
 	username = var.cml_username_1
 	password = var.cml_password_1
-	skip_verify = true
+	skip_verify = true # skip verify because there is no need for TLS verification in a home lab
 }
 
 provider "cml2" {

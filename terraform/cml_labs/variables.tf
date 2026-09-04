@@ -23,21 +23,19 @@ variable "sw_labels" {
 variable "enable_secret" {
 	type = string
 	default = "admin"
+	sensitive = true
 }
 
 variable "ansible_user" {
 	type = string
 	default = "admin"
+	sensitive = true
 }
 
 variable "ansible_password" {
 	type = string
 	default = "admin"
-}
-
-variable "ip_increment_amount" {
-	type = number
-	default = 10
+	sensitive = true
 }
 
 # keep default in case ip_start is called more than twice but not passed in root variables
