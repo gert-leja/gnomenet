@@ -23,8 +23,6 @@ export TF_VAR_cml_password_2="PASSWORD"
 
 These exports only last for the current shell session, meaning these need to be re-exported every time.
 
-Alternatively these can be put into a local script that's sourced before running Terraform, but this hasn't been explored for this project yet.
-
 If you are running this locally, you can also create a **terraform.tfvars** file in the same folder as your other terraform files, where you can add the same variables and Terraform will automatically apply the .tfvars file whenever you use Terraform.
 
 ## Additionals
