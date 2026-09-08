@@ -1,0 +1,27 @@
+hostname ${hostname}
+!
+enable secret ${enable_secret}
+!
+username ${ansible_user} privilege 15 secret ${ansible_password}
+!
+ip domain name gnomenet.com
+crypto key generate rsa modulus 4096
+!
+line vty 0 4
+ login local
+ transport input ssh
+!
+interface Loopback0
+ ip address ${loopback_ip} 255.255.255.255
+ no shutdown
+!
+%{ for iface in interfaces }
+interface ${iface.name}
+ ip address ${iface.ip} ${iface.mask}
+ no shutdown
+!
+%{ endfor }
+router ospf 1
+ network 192.168.0.0 0.0.255.255 area 0
+ network 10.0.0.0 0.255.255.255 area 1
+end
