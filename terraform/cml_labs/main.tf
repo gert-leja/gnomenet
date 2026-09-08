@@ -87,7 +87,7 @@ resource "cml2_node" "ext_conn" {
 	label = "External"
 }
 
-# R1 will connect to External, but there is no need for a separate network assignment for R1, R1 will grab IP via DHCP.
+# R1 will connect to External
 resource "cml2_node" "routers" {
 	for_each = var.r_labels
 	lab_id = cml2_lab.lab.id
