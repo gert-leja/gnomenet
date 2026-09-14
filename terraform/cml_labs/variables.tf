@@ -44,6 +44,7 @@ variable "ip_start" {
 	default = 9 
 }
 
+# not sure if this is needed because its not OSPF routed anyway?
 variable "management_cidr" {
 	type = string
 	default = "1.1.1.0/24"

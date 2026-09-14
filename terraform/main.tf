@@ -59,8 +59,8 @@ output "lab_1_switch_id" {
 	value = module.lab_1.switch_id
 }
 
-output "lab_1_router_management_ip" {
-	value = module.lab_1.router_management_ip
+output "lap_1_router_ips" {
+	value = module.lab_1.router_ips
 }
 
 output "lab_2_router_id" {
@@ -71,6 +71,6 @@ output "lab_2_switch_id" {
 	value = module.lab_2.switch_id
 }
 
-output "lab_2_router_management_ip" {
-	value = module.lab_2.router_management_ip
+output "lab_2_router_ip" {
+	value = module.lab_2.router_ips
 }

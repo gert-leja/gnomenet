@@ -170,6 +170,10 @@ output "ext_conn_id" {
 	value = cml2_node.ext_conn.id
 }
 
-output "router_management_ip" {
-	value = local.router_management_ip
+output "router_ips" {
+	value = {
+		for router, ifaces in local.router_ifaces : router => {
+			for iface in ifaces : iface.name => iface.ip
+		}
+	}
 }
